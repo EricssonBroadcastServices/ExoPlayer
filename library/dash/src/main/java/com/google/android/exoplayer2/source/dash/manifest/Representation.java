@@ -54,10 +54,15 @@ public abstract class Representation {
    * The offset of the presentation timestamps in the media stream relative to media time.
    */
   public final long presentationTimeOffsetUs;
+  /**
+   * The availability time offset in milliseconds.
+   */
+  public final long availabilityTimeOffsetUs;
   /** The in-band event streams in the representation. May be empty. */
   public final List<Descriptor> inbandEventStreams;
 
   private final RangedUri initializationUri;
+
 
   /**
    * Constructs a new instance.
@@ -69,8 +74,8 @@ public abstract class Representation {
    * @return The constructed instance.
    */
   public static Representation newInstance(
-      long revisionId, Format format, String baseUrl, SegmentBase segmentBase) {
-    return newInstance(revisionId, format, baseUrl, segmentBase, /* inbandEventStreams= */ null);
+      long revisionId, Format format, String baseUrl, long availabilityTimeOffsetUsFromBaseUrl, SegmentBase segmentBase, long availabilityTimeOffsetUs) {
+    return newInstance(revisionId, format, baseUrl, availabilityTimeOffsetUsFromBaseUrl, segmentBase, /* inbandEventStreams= */ null);
   }
 
   /**
@@ -87,10 +92,11 @@ public abstract class Representation {
       long revisionId,
       Format format,
       String baseUrl,
+      long availabilityTimeOffsetUsFromBaseUrl,
       SegmentBase segmentBase,
       @Nullable List<Descriptor> inbandEventStreams) {
     return newInstance(
-        revisionId, format, baseUrl, segmentBase, inbandEventStreams, /* cacheKey= */ null);
+        revisionId, format, baseUrl, availabilityTimeOffsetUsFromBaseUrl, segmentBase, inbandEventStreams, /* cacheKey= */ null);
   }
 
   /**
@@ -109,6 +115,7 @@ public abstract class Representation {
       long revisionId,
       Format format,
       String baseUrl,
+      long availabilityTimeOffsetUsFromBaseUrl,
       SegmentBase segmentBase,
       @Nullable List<Descriptor> inbandEventStreams,
       @Nullable String cacheKey) {
@@ -117,13 +124,14 @@ public abstract class Representation {
           revisionId,
           format,
           baseUrl,
+          availabilityTimeOffsetUsFromBaseUrl,
           (SingleSegmentBase) segmentBase,
           inbandEventStreams,
           cacheKey,
           C.LENGTH_UNSET);
     } else if (segmentBase instanceof MultiSegmentBase) {
       return new MultiSegmentRepresentation(
-          revisionId, format, baseUrl, (MultiSegmentBase) segmentBase, inbandEventStreams);
+          revisionId, format, baseUrl, availabilityTimeOffsetUsFromBaseUrl, (MultiSegmentBase) segmentBase, inbandEventStreams);
     } else {
       throw new IllegalArgumentException("segmentBase must be of type SingleSegmentBase or "
           + "MultiSegmentBase");
@@ -134,6 +142,7 @@ public abstract class Representation {
       long revisionId,
       Format format,
       String baseUrl,
+      long availabilityTimeOffsetUsFromBaseUrl,
       SegmentBase segmentBase,
       @Nullable List<Descriptor> inbandEventStreams) {
     this.revisionId = revisionId;
@@ -145,6 +154,7 @@ public abstract class Representation {
             : Collections.unmodifiableList(inbandEventStreams);
     initializationUri = segmentBase.getInitialization(this);
     presentationTimeOffsetUs = segmentBase.getPresentationTimeOffsetUs();
+    this.availabilityTimeOffsetUs = segmentBase.availabilityTimeOffsetUs != C.TIME_UNSET ? segmentBase.availabilityTimeOffsetUs : availabilityTimeOffsetUsFromBaseUrl;
   }
 
   /**
@@ -208,6 +218,7 @@ public abstract class Representation {
         String uri,
         long initializationStart,
         long initializationEnd,
+        long availabilityTimeOffsetUsFromBaseUrl,
         long indexStart,
         long indexEnd,
         List<Descriptor> inbandEventStreams,
@@ -215,10 +226,10 @@ public abstract class Representation {
         long contentLength) {
       RangedUri rangedUri = new RangedUri(null, initializationStart,
           initializationEnd - initializationStart + 1);
-      SingleSegmentBase segmentBase = new SingleSegmentBase(rangedUri, 1, 0, indexStart,
+      SingleSegmentBase segmentBase = new SingleSegmentBase(rangedUri, 1, 0, C.TIME_UNSET, indexStart,
           indexEnd - indexStart + 1);
       return new SingleSegmentRepresentation(
-          revisionId, format, uri, segmentBase, inbandEventStreams, cacheKey, contentLength);
+          revisionId, format, uri, availabilityTimeOffsetUsFromBaseUrl, segmentBase, inbandEventStreams, cacheKey, contentLength);
     }
 
     /**
@@ -234,11 +245,12 @@ public abstract class Representation {
         long revisionId,
         Format format,
         String baseUrl,
+        long availabilityTimeOffsetUsFromBaseUrl,
         SingleSegmentBase segmentBase,
         @Nullable List<Descriptor> inbandEventStreams,
         @Nullable String cacheKey,
         long contentLength) {
-      super(revisionId, format, baseUrl, segmentBase, inbandEventStreams);
+      super(revisionId, format, baseUrl, availabilityTimeOffsetUsFromBaseUrl, segmentBase, inbandEventStreams);
       this.uri = Uri.parse(baseUrl);
       this.indexUri = segmentBase.getIndex();
       this.cacheKey = cacheKey;
@@ -288,9 +300,10 @@ public abstract class Representation {
         long revisionId,
         Format format,
         String baseUrl,
+        long availabilityTimeOffsetUsFromBaseUrl,
         MultiSegmentBase segmentBase,
         @Nullable List<Descriptor> inbandEventStreams) {
-      super(revisionId, format, baseUrl, segmentBase, inbandEventStreams);
+      super(revisionId, format, baseUrl, availabilityTimeOffsetUsFromBaseUrl, segmentBase, inbandEventStreams);
       this.segmentBase = segmentBase;
     }
 

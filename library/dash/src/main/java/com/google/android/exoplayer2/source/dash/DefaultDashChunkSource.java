@@ -774,9 +774,13 @@ public class DefaultDashChunkSource implements DashChunkSource {
         long liveEdgeTimeUs = nowUnixTimeUs - C.msToUs(manifest.availabilityStartTimeMs);
         long periodStartUs = C.msToUs(manifest.getPeriod(periodIndex).startMs);
         long liveEdgeTimeInPeriodUs = liveEdgeTimeUs - periodStartUs;
-        // getSegmentNum(liveEdgeTimeInPeriodUs) will not be completed yet, so subtract one to get
-        // the index of the last completed segment.
-        return getSegmentNum(liveEdgeTimeInPeriodUs) - 1;
+        if(representation.availabilityTimeOffsetUs != C.TIME_UNSET) {
+          return getSegmentNum(liveEdgeTimeInPeriodUs+representation.availabilityTimeOffsetUs) - 1;
+        } else {
+          // getSegmentNum(liveEdgeTimeInPeriodUs) will not be completed yet, so subtract one to get
+          // the index of the last completed segment.
+          return getSegmentNum(liveEdgeTimeInPeriodUs) - 1;
+        }
       }
       return getFirstSegmentNum() + availableSegmentCount - 1;
     }

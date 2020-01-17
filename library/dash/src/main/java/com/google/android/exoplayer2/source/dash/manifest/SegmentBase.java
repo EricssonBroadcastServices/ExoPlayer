@@ -29,6 +29,7 @@ public abstract class SegmentBase {
   /* package */ @Nullable final RangedUri initialization;
   /* package */ final long timescale;
   /* package */ final long presentationTimeOffset;
+  /* package */ final long availabilityTimeOffsetUs;
 
   /**
    * @param initialization A {@link RangedUri} corresponding to initialization data, if such data
@@ -38,10 +39,11 @@ public abstract class SegmentBase {
    *     division of this value and {@code timescale}.
    */
   public SegmentBase(
-      @Nullable RangedUri initialization, long timescale, long presentationTimeOffset) {
+      @Nullable RangedUri initialization, long timescale, long presentationTimeOffset, long availabilityTimeOffsetUs) {
     this.initialization = initialization;
     this.timescale = timescale;
     this.presentationTimeOffset = presentationTimeOffset;
+    this.availabilityTimeOffsetUs = availabilityTimeOffsetUs;
   }
 
   /**
@@ -84,9 +86,10 @@ public abstract class SegmentBase {
         @Nullable RangedUri initialization,
         long timescale,
         long presentationTimeOffset,
+        long availabilityTimeOffsetUs,
         long indexStart,
         long indexLength) {
-      super(initialization, timescale, presentationTimeOffset);
+      super(initialization, timescale, presentationTimeOffset, availabilityTimeOffsetUs);
       this.indexStart = indexStart;
       this.indexLength = indexLength;
     }
@@ -96,6 +99,7 @@ public abstract class SegmentBase {
           /* initialization= */ null,
           /* timescale= */ 1,
           /* presentationTimeOffset= */ 0,
+          /* availabilityTimeOffsetUs= */ C.TIME_UNSET,
           /* indexStart= */ 0,
           /* indexLength= */ 0);
     }
@@ -136,10 +140,11 @@ public abstract class SegmentBase {
         @Nullable RangedUri initialization,
         long timescale,
         long presentationTimeOffset,
+        long availabilityTimeOffsetUs,
         long startNumber,
         long duration,
         @Nullable List<SegmentTimelineElement> segmentTimeline) {
-      super(initialization, timescale, presentationTimeOffset);
+      super(initialization, timescale, presentationTimeOffset, availabilityTimeOffsetUs);
       this.startNumber = startNumber;
       this.duration = duration;
       this.segmentTimeline = segmentTimeline;
@@ -259,12 +264,13 @@ public abstract class SegmentBase {
         RangedUri initialization,
         long timescale,
         long presentationTimeOffset,
+        long availabilityTimeOffsetUs,
         long startNumber,
         long duration,
         @Nullable List<SegmentTimelineElement> segmentTimeline,
         @Nullable List<RangedUri> mediaSegments) {
-      super(initialization, timescale, presentationTimeOffset, startNumber, duration,
-          segmentTimeline);
+      super(initialization, timescale, presentationTimeOffset, availabilityTimeOffsetUs, startNumber,
+          duration, segmentTimeline);
       this.mediaSegments = mediaSegments;
     }
 
@@ -323,6 +329,7 @@ public abstract class SegmentBase {
         long startNumber,
         long endNumber,
         long duration,
+        long availabilityTimeOffsetUs,
         @Nullable List<SegmentTimelineElement> segmentTimeline,
         @Nullable UrlTemplate initializationTemplate,
         @Nullable UrlTemplate mediaTemplate) {
@@ -330,6 +337,7 @@ public abstract class SegmentBase {
           initialization,
           timescale,
           presentationTimeOffset,
+          availabilityTimeOffsetUs,
           startNumber,
           duration,
           segmentTimeline);
