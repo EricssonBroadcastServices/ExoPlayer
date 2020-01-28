@@ -22,6 +22,8 @@ import androidx.annotation.VisibleForTesting;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
 import com.google.android.exoplayer2.metadata.MetadataRenderer;
+import com.google.android.exoplayer2.playback.DefaultPlaybackRateController;
+import com.google.android.exoplayer2.playback.PlaybackRateController;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
@@ -138,6 +140,7 @@ public interface ExoPlayer extends Player {
     private TrackSelector trackSelector;
     private LoadControl loadControl;
     private BandwidthMeter bandwidthMeter;
+    private PlaybackRateController playbackRateController;
     private Looper looper;
     private AnalyticsCollector analyticsCollector;
     private boolean useLazyPreparation;
@@ -169,6 +172,7 @@ public interface ExoPlayer extends Player {
           new DefaultTrackSelector(context),
           new DefaultLoadControl(),
           DefaultBandwidthMeter.getSingletonInstance(context),
+          new DefaultPlaybackRateController.Builder().build(),
           Util.getLooper(),
           new AnalyticsCollector(Clock.DEFAULT),
           /* useLazyPreparation= */ true,
@@ -196,6 +200,7 @@ public interface ExoPlayer extends Player {
         TrackSelector trackSelector,
         LoadControl loadControl,
         BandwidthMeter bandwidthMeter,
+        PlaybackRateController playbackRateController,
         Looper looper,
         AnalyticsCollector analyticsCollector,
         boolean useLazyPreparation,
@@ -205,6 +210,7 @@ public interface ExoPlayer extends Player {
       this.trackSelector = trackSelector;
       this.loadControl = loadControl;
       this.bandwidthMeter = bandwidthMeter;
+      this.playbackRateController = playbackRateController;
       this.looper = looper;
       this.analyticsCollector = analyticsCollector;
       this.useLazyPreparation = useLazyPreparation;
@@ -318,7 +324,7 @@ public interface ExoPlayer extends Player {
       Assertions.checkState(!buildCalled);
       buildCalled = true;
       return new ExoPlayerImpl(
-          renderers, trackSelector, loadControl, bandwidthMeter, clock, looper);
+          renderers, trackSelector, loadControl, bandwidthMeter, playbackRateController, clock, looper);
     }
   }
 

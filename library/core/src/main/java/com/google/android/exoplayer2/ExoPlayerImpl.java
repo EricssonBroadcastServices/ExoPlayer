@@ -22,6 +22,7 @@ import android.os.Message;
 import android.util.Pair;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.PlayerMessage.Target;
+import com.google.android.exoplayer2.playback.PlaybackRateController;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSource.MediaPeriodId;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -100,6 +101,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
       TrackSelector trackSelector,
       LoadControl loadControl,
       BandwidthMeter bandwidthMeter,
+      PlaybackRateController playbackRateController,
       Clock clock,
       Looper looper) {
     Log.i(TAG, "Init " + Integer.toHexString(System.identityHashCode(this)) + " ["
@@ -136,6 +138,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
             emptyTrackSelectorResult,
             loadControl,
             bandwidthMeter,
+            playbackRateController,
             playWhenReady,
             repeatMode,
             shuffleModeEnabled,

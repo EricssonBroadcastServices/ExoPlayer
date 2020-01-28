@@ -31,6 +31,8 @@ import java.util.List;
  */
 public interface DashChunkSource extends ChunkSource {
 
+  long getLiveEdgeTimeUs();
+
   /** Factory for {@link DashChunkSource}s. */
   interface Factory {
 

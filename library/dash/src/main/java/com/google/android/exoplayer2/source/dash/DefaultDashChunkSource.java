@@ -482,9 +482,15 @@ public class DefaultDashChunkSource implements DashChunkSource {
     }
   }
 
+  @Override
+  public long getLiveEdgeTimeUs() {
+    return liveEdgeTimeUs;
+  }
+
   private long resolveTimeToLiveEdgeUs(long playbackPositionUs) {
-    boolean resolveTimeToLiveEdgePossible = manifest.dynamic && liveEdgeTimeUs != C.TIME_UNSET;
-    return resolveTimeToLiveEdgePossible ? liveEdgeTimeUs - playbackPositionUs : C.TIME_UNSET;
+    long liveEdgeTimeUsSnapshot = getLiveEdgeTimeUs();
+    boolean resolveTimeToLiveEdgePossible = manifest.dynamic && liveEdgeTimeUsSnapshot != C.TIME_UNSET;
+    return resolveTimeToLiveEdgePossible ? liveEdgeTimeUsSnapshot - playbackPositionUs : C.TIME_UNSET;
   }
 
   protected Chunk newInitializationChunk(

@@ -21,6 +21,8 @@ import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.playback.DefaultPlaybackRateController;
+import com.google.android.exoplayer2.playback.PlaybackRateController;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
@@ -281,12 +283,41 @@ public final class ExoPlayerFactory {
   @SuppressWarnings("deprecation")
   @Deprecated
   public static SimpleExoPlayer newSimpleInstance(
+          Context context,
+          RenderersFactory renderersFactory,
+          TrackSelector trackSelector,
+          LoadControl loadControl,
+          @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+          BandwidthMeter bandwidthMeter,
+          AnalyticsCollector analyticsCollector,
+          Looper looper) {
+    return newSimpleInstance(
+            context,
+            renderersFactory,
+            trackSelector,
+            loadControl,
+            drmSessionManager,
+            bandwidthMeter,
+            new DefaultPlaybackRateController.Builder().build(),
+            analyticsCollector,
+            looper);
+  }
+
+  /**
+   * @deprecated Use {@link SimpleExoPlayer.Builder} instead. The {@link DrmSessionManager} cannot
+   *     be passed to {@link SimpleExoPlayer.Builder} and should instead be injected into the {@link
+   *     MediaSource} factories.
+   */
+  @SuppressWarnings("deprecation")
+  @Deprecated
+  public static SimpleExoPlayer newSimpleInstance(
       Context context,
       RenderersFactory renderersFactory,
       TrackSelector trackSelector,
       LoadControl loadControl,
       @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
       BandwidthMeter bandwidthMeter,
+      PlaybackRateController playbackRateController,
       AnalyticsCollector analyticsCollector,
       Looper looper) {
     return new SimpleExoPlayer(
@@ -296,6 +327,7 @@ public final class ExoPlayerFactory {
         loadControl,
         drmSessionManager,
         bandwidthMeter,
+            playbackRateController,
         analyticsCollector,
         Clock.DEFAULT,
         looper);
@@ -325,6 +357,7 @@ public final class ExoPlayerFactory {
       Renderer[] renderers,
       TrackSelector trackSelector,
       LoadControl loadControl,
+      PlaybackRateController playbackRateController,
       Looper looper) {
     return newInstance(
         context,
@@ -332,7 +365,26 @@ public final class ExoPlayerFactory {
         trackSelector,
         loadControl,
         DefaultBandwidthMeter.getSingletonInstance(context),
+            playbackRateController,
         looper);
+  }
+
+  /** @deprecated Use {@link ExoPlayer.Builder} instead. */
+  @Deprecated
+  @SuppressWarnings("deprecation")
+  public static ExoPlayer newInstance(
+          Context context,
+          Renderer[] renderers,
+          TrackSelector trackSelector,
+          LoadControl loadControl,
+          Looper looper) {
+    return newInstance(
+            context,
+            renderers,
+            trackSelector,
+            loadControl,
+            DefaultBandwidthMeter.getSingletonInstance(context),
+            looper);
   }
 
   /** @deprecated Use {@link ExoPlayer.Builder} instead. */
@@ -343,8 +395,21 @@ public final class ExoPlayerFactory {
       TrackSelector trackSelector,
       LoadControl loadControl,
       BandwidthMeter bandwidthMeter,
+      PlaybackRateController playbackRateController,
       Looper looper) {
     return new ExoPlayerImpl(
-        renderers, trackSelector, loadControl, bandwidthMeter, Clock.DEFAULT, looper);
+        renderers, trackSelector, loadControl, bandwidthMeter, playbackRateController, Clock.DEFAULT, looper);
+  }
+
+  /** @deprecated Use {@link ExoPlayer.Builder} instead. */
+  @Deprecated
+  public static ExoPlayer newInstance(
+          Context context,
+          Renderer[] renderers,
+          TrackSelector trackSelector,
+          LoadControl loadControl,
+          BandwidthMeter bandwidthMeter,
+          Looper looper) {
+    return newInstance(context, renderers, trackSelector, loadControl, bandwidthMeter, new DefaultPlaybackRateController.Builder().build(), looper);
   }
 }

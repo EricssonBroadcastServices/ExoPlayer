@@ -22,9 +22,12 @@ import android.os.Message;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.DefaultMediaClock.PlaybackParameterListener;
 import com.google.android.exoplayer2.Player.DiscontinuityReason;
+import com.google.android.exoplayer2.playback.PlaybackRateController;
 import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSource.MediaPeriodId;
@@ -90,6 +93,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
   private final TrackSelectorResult emptyTrackSelectorResult;
   private final LoadControl loadControl;
   private final BandwidthMeter bandwidthMeter;
+  private final PlaybackRateController playbackRateController;
   private final HandlerWrapper handler;
   private final HandlerThread internalPlaybackThread;
   private final Handler eventHandler;
@@ -129,6 +133,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
       TrackSelectorResult emptyTrackSelectorResult,
       LoadControl loadControl,
       BandwidthMeter bandwidthMeter,
+      PlaybackRateController playbackRateController,
       boolean playWhenReady,
       @Player.RepeatMode int repeatMode,
       boolean shuffleModeEnabled,
@@ -139,6 +144,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     this.emptyTrackSelectorResult = emptyTrackSelectorResult;
     this.loadControl = loadControl;
     this.bandwidthMeter = bandwidthMeter;
+    this.playbackRateController = playbackRateController;
     this.playWhenReady = playWhenReady;
     this.repeatMode = repeatMode;
     this.shuffleModeEnabled = shuffleModeEnabled;
@@ -558,6 +564,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
     MediaPeriodHolder loadingPeriod = queue.getLoadingPeriod();
     playbackInfo.bufferedPositionUs = loadingPeriod.getBufferedPositionUs();
     playbackInfo.totalBufferedDurationUs = getTotalBufferedDurationUs();
+
+    long liveEdgePositionUs = loadingPeriod.getLiveEdgePositionUs();
+
+    playbackRateController.onPositionsUpdated(playbackSpeed -> {
+      PlaybackParameters currentPlaybackParameters = mediaClock.getPlaybackParameters();
+      handler.obtainMessage(
+              MSG_SET_PLAYBACK_PARAMETERS,
+              new PlaybackParameters(
+                      playbackSpeed,
+                      currentPlaybackParameters.pitch,
+                      currentPlaybackParameters.skipSilence))
+              .sendToTarget();
+    }, playbackInfo.positionUs, liveEdgePositionUs);
   }
 
   private void doSomeWork() throws ExoPlaybackException, IOException {

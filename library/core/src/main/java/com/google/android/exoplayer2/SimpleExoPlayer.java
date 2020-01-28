@@ -41,6 +41,8 @@ import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
+import com.google.android.exoplayer2.playback.DefaultPlaybackRateController;
+import com.google.android.exoplayer2.playback.PlaybackRateController;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.text.Cue;
@@ -93,6 +95,7 @@ public class SimpleExoPlayer extends BasePlayer
     private TrackSelector trackSelector;
     private LoadControl loadControl;
     private BandwidthMeter bandwidthMeter;
+    private PlaybackRateController playbackRateController;
     private AnalyticsCollector analyticsCollector;
     private Looper looper;
     private boolean useLazyPreparation;
@@ -142,6 +145,7 @@ public class SimpleExoPlayer extends BasePlayer
           new DefaultTrackSelector(context),
           new DefaultLoadControl(),
           DefaultBandwidthMeter.getSingletonInstance(context),
+              new DefaultPlaybackRateController.Builder().build(),
           Util.getLooper(),
           new AnalyticsCollector(Clock.DEFAULT),
           /* useLazyPreparation= */ true,
@@ -172,6 +176,7 @@ public class SimpleExoPlayer extends BasePlayer
         TrackSelector trackSelector,
         LoadControl loadControl,
         BandwidthMeter bandwidthMeter,
+        PlaybackRateController playbackRateController,
         Looper looper,
         AnalyticsCollector analyticsCollector,
         boolean useLazyPreparation,
@@ -181,6 +186,7 @@ public class SimpleExoPlayer extends BasePlayer
       this.trackSelector = trackSelector;
       this.loadControl = loadControl;
       this.bandwidthMeter = bandwidthMeter;
+      this.playbackRateController = playbackRateController;
       this.looper = looper;
       this.analyticsCollector = analyticsCollector;
       this.useLazyPreparation = useLazyPreparation;
@@ -285,6 +291,12 @@ public class SimpleExoPlayer extends BasePlayer
       return this;
     }
 
+    public Builder setPlaybackRateController(PlaybackRateController playbackRateController) {
+      Assertions.checkState(!buildCalled);
+      this.playbackRateController = playbackRateController;
+      return this;
+    }
+
     /**
      * Builds a {@link SimpleExoPlayer} instance.
      *
@@ -299,6 +311,7 @@ public class SimpleExoPlayer extends BasePlayer
           trackSelector,
           loadControl,
           bandwidthMeter,
+              playbackRateController,
           analyticsCollector,
           clock,
           looper);
@@ -371,6 +384,7 @@ public class SimpleExoPlayer extends BasePlayer
       TrackSelector trackSelector,
       LoadControl loadControl,
       BandwidthMeter bandwidthMeter,
+      PlaybackRateController playbackRateController,
       AnalyticsCollector analyticsCollector,
       Clock clock,
       Looper looper) {
@@ -381,6 +395,7 @@ public class SimpleExoPlayer extends BasePlayer
         loadControl,
         DrmSessionManager.getDummyDrmSessionManager(),
         bandwidthMeter,
+            playbackRateController,
         analyticsCollector,
         clock,
         looper);
@@ -412,6 +427,7 @@ public class SimpleExoPlayer extends BasePlayer
       LoadControl loadControl,
       @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
       BandwidthMeter bandwidthMeter,
+      PlaybackRateController playbackRateController,
       AnalyticsCollector analyticsCollector,
       Clock clock,
       Looper looper) {
@@ -443,7 +459,7 @@ public class SimpleExoPlayer extends BasePlayer
 
     // Build the player and associated objects.
     player =
-        new ExoPlayerImpl(renderers, trackSelector, loadControl, bandwidthMeter, clock, looper);
+        new ExoPlayerImpl(renderers, trackSelector, loadControl, bandwidthMeter, playbackRateController, clock, looper);
     analyticsCollector.setPlayer(player);
     addListener(analyticsCollector);
     addListener(componentListener);
