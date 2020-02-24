@@ -127,8 +127,8 @@ public class DashManifestParser extends DefaultHandler
       xpp.next();
       if (XmlPullParserUtil.isStartTag(xpp, "BaseURL")) {
         if (!seenFirstBaseUrl) {
-          baseUrl = parseBaseUrl(xpp, baseUrl);
           availabilityTimeOffsetUsFromBaseUrl = parseAvailabilityTimeOffsetUs(xpp, availabilityTimeOffsetUsFromBaseUrl);
+          baseUrl = parseBaseUrl(xpp, baseUrl);
           seenFirstBaseUrl = true;
         }
       } else if (XmlPullParserUtil.isStartTag(xpp, "ProgramInformation")) {
@@ -296,8 +296,8 @@ public class DashManifestParser extends DefaultHandler
       xpp.next();
       if (XmlPullParserUtil.isStartTag(xpp, "BaseURL")) {
         if (!seenFirstBaseUrl) {
-          baseUrl = parseBaseUrl(xpp, baseUrl);
           availabilityTimeOffsetUsFromBaseUrl = parseAvailabilityTimeOffsetUs(xpp, availabilityTimeOffsetUsFromBaseUrl);
+          baseUrl = parseBaseUrl(xpp, baseUrl);
           seenFirstBaseUrl = true;
         }
       } else if (XmlPullParserUtil.isStartTag(xpp, "ContentProtection")) {
@@ -531,8 +531,8 @@ public class DashManifestParser extends DefaultHandler
       xpp.next();
       if (XmlPullParserUtil.isStartTag(xpp, "BaseURL")) {
         if (!seenFirstBaseUrl) {
-          baseUrl = parseBaseUrl(xpp, baseUrl);
           availabilityTimeOffsetUsFromBaseUrl = parseAvailabilityTimeOffsetUs(xpp, availabilityTimeOffsetUsFromBaseUrl);
+          baseUrl = parseBaseUrl(xpp, baseUrl);
           seenFirstBaseUrl = true;
         }
       } else if (XmlPullParserUtil.isStartTag(xpp, "AudioChannelConfiguration")) {
