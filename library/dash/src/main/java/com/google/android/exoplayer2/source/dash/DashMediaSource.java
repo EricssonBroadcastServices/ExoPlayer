@@ -1436,4 +1436,9 @@ public final class DashMediaSource extends BaseMediaSource {
       }
     }
   }
+
+  @Override
+  public long getLiveTimeUs() {
+    return getNowUnixTimeUs();
+  }
 }

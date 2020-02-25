@@ -565,7 +565,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     playbackInfo.bufferedPositionUs = loadingPeriod.getBufferedPositionUs();
     playbackInfo.totalBufferedDurationUs = getTotalBufferedDurationUs();
 
-    long liveEdgePositionUs = loadingPeriod.getLiveEdgePositionUs();
+    long liveTimeUs = mediaSource.getLiveTimeUs();
 
     playbackRateController.onPositionsUpdated(playbackSpeed -> {
       PlaybackParameters currentPlaybackParameters = mediaClock.getPlaybackParameters();
@@ -576,7 +576,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
                       currentPlaybackParameters.pitch,
                       currentPlaybackParameters.skipSilence))
               .sendToTarget();
-    }, playbackInfo.positionUs, liveEdgePositionUs);
+    }, playbackInfo.positionUs, liveTimeUs);
   }
 
   private void doSomeWork() throws ExoPlaybackException, IOException {

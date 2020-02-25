@@ -17,10 +17,14 @@ package com.google.android.exoplayer2.source;
 
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.Nullable;
+
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -187,5 +191,10 @@ public abstract class BaseMediaSource implements MediaSource {
     } else {
       disable(caller);
     }
+  }
+
+  @Override
+  public long getLiveTimeUs() {
+    return C.TIME_UNSET;
   }
 }

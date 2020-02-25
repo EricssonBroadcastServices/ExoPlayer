@@ -429,12 +429,4 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
       Log.e(TAG, "Period release failed.", e);
     }
   }
-
-  public long getLiveEdgePositionUs() {
-    if(mediaPeriod instanceof LiveEnabledMediaPeriod) {
-      return ((LiveEnabledMediaPeriod) mediaPeriod).getLiveEdgePositionUs();
-    } else {
-      return C.TIME_UNSET;
-    }
-  }
 }

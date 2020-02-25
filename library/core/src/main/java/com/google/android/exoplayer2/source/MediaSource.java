@@ -322,4 +322,9 @@ public interface MediaSource {
    * @param caller The {@link MediaSourceCaller} to be unregistered.
    */
   void releaseSource(MediaSourceCaller caller);
+
+  /**
+   * @return The live time to use for latency calculations or C.TIME_UNSET if not available.
+   */
+  long getLiveTimeUs();
 }

@@ -17,13 +17,10 @@ package com.google.android.exoplayer2.source.dash;
 
 import android.util.Pair;
 import android.util.SparseIntArray;
-
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.LiveEnabledMediaPeriod;
 import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -68,7 +65,6 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
 /** A DASH {@link MediaPeriod}. */
 /* package */ final class DashMediaPeriod
     implements MediaPeriod,
-        LiveEnabledMediaPeriod,
         SequenceableLoader.Callback<ChunkSampleStream<DashChunkSource>>,
         ChunkSampleStream.ReleaseCallback<DashChunkSource> {
 
@@ -323,18 +319,6 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
   @Override
   public long getBufferedPositionUs() {
     return compositeSequenceableLoader.getBufferedPositionUs();
-  }
-
-  @Override
-  public long getLiveEdgePositionUs() {
-    if(manifest.dynamic) {
-      for (ChunkSampleStream<DashChunkSource> sampleStream : sampleStreams) {
-        if (sampleStream.primaryTrackType == C.TRACK_TYPE_VIDEO) {
-          return sampleStream.getChunkSource().getLiveEdgeTimeUs();
-        }
-      }
-    }
-    return C.TIME_UNSET;
   }
 
   @Override

@@ -64,10 +64,10 @@ public final class DefaultPlaybackRateController implements PlaybackRateControll
     }
 
     @Override
-    public void onPositionsUpdated(SpeedHandler speedHandler, long positionUs, long liveEdgePositionUs) {
+    public void onPositionsUpdated(SpeedHandler speedHandler, long positionUs, long liveTimeUs) {
         if (state == STATE_INACTIVE) {
-            if (positionUs != C.TIME_UNSET && liveEdgePositionUs != C.TIME_UNSET) {
-                long latencyMs = C.usToMs(liveEdgePositionUs - positionUs);
+            if (positionUs != C.TIME_UNSET && liveTimeUs != C.TIME_UNSET) {
+                long latencyMs = C.usToMs(liveTimeUs - positionUs);
                 long latencyErrorMs = latencyMs-targetLatencyMs;
 
                 if (latencyErrorMs > maxDriftMs) {
@@ -79,8 +79,8 @@ public final class DefaultPlaybackRateController implements PlaybackRateControll
                 }
             }
         } else if(state == STATE_SPEED_UP) {
-            if (positionUs != C.TIME_UNSET && liveEdgePositionUs != C.TIME_UNSET) {
-                long latencyMs = C.usToMs(liveEdgePositionUs - positionUs);
+            if (positionUs != C.TIME_UNSET && liveTimeUs != C.TIME_UNSET) {
+                long latencyMs = C.usToMs(liveTimeUs - positionUs);
                 long latencyErrorMs = latencyMs-targetLatencyMs;
 
                 if (latencyErrorMs <= maxDriftMs) {
@@ -92,8 +92,8 @@ public final class DefaultPlaybackRateController implements PlaybackRateControll
                 return;
             }
         } else if(state == STATE_SLOW_DOWN) {
-            if (positionUs != C.TIME_UNSET && liveEdgePositionUs != C.TIME_UNSET) {
-                long latencyMs = C.usToMs(liveEdgePositionUs - positionUs);
+            if (positionUs != C.TIME_UNSET && liveTimeUs != C.TIME_UNSET) {
+                long latencyMs = C.usToMs(liveTimeUs - positionUs);
                 long latencyErrorMs = latencyMs-targetLatencyMs;
 
                 if (latencyErrorMs >= -maxDriftMs) {
