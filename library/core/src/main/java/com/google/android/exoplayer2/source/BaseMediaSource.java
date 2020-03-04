@@ -22,6 +22,10 @@ import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.upstream.BandwidthMeterAlgorithm;
+import com.google.android.exoplayer2.upstream.BandwidthMeterAlgorithmProvider;
+import com.google.android.exoplayer2.upstream.BandwidthMeterAlgorithmSelector;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeterAlgorithmProvider;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 
@@ -41,8 +45,11 @@ public abstract class BaseMediaSource implements MediaSource {
   private final HashSet<MediaSourceCaller> enabledMediaSourceCallers;
   private final MediaSourceEventListener.EventDispatcher eventDispatcher;
 
+  private final BandwidthMeterAlgorithmSelector bandwidthMeterAlgorithmSelector = new DefaultBandwidthMeterAlgorithmSelector();
+
   @Nullable private Looper looper;
   @Nullable private Timeline timeline;
+
 
   public BaseMediaSource() {
     mediaSourceCallers = new ArrayList<>(/* initialCapacity= */ 1);
@@ -196,5 +203,18 @@ public abstract class BaseMediaSource implements MediaSource {
   @Override
   public long getLiveTimeUs() {
     return C.TIME_UNSET;
+  }
+
+  @Override
+  public BandwidthMeterAlgorithmSelector getBandwidthMeterAlgorithmSelector() {
+    return bandwidthMeterAlgorithmSelector;
+  }
+
+  private static class DefaultBandwidthMeterAlgorithmSelector implements BandwidthMeterAlgorithmSelector {
+    @Nullable
+    @Override
+    public BandwidthMeterAlgorithm selectBandwidthMeterAlgorithm(BandwidthMeterAlgorithmProvider bandwidthMeterAlgorithmProvider) {
+      return bandwidthMeterAlgorithmProvider.getAlgorithm(DefaultBandwidthMeterAlgorithmProvider.ALGORITHM_DEFAULT);
+    }
   }
 }

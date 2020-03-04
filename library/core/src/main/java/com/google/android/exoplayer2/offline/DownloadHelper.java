@@ -1136,5 +1136,10 @@ public final class DownloadHelper {
     public void removeEventListener(EventListener eventListener) {
       // Do nothing.
     }
+
+    @Override
+    public void onMediaSourceChanged(MediaSource mediaSource) {
+      // Do nothing
+    }
   }
 }

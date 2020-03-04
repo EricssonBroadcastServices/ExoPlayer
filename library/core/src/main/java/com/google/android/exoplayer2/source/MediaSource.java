@@ -16,11 +16,15 @@
 package com.google.android.exoplayer2.source;
 
 import android.os.Handler;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.upstream.Allocator;
+import com.google.android.exoplayer2.upstream.BandwidthMeterAlgorithmSelector;
 import com.google.android.exoplayer2.upstream.TransferListener;
+
 import java.io.IOException;
 
 /**
@@ -327,4 +331,6 @@ public interface MediaSource {
    * @return The live time to use for latency calculations or C.TIME_UNSET if not available.
    */
   long getLiveTimeUs();
+
+  BandwidthMeterAlgorithmSelector getBandwidthMeterAlgorithmSelector();
 }

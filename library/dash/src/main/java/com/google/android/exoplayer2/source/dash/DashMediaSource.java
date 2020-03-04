@@ -44,7 +44,11 @@ import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
 import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
 import com.google.android.exoplayer2.source.dash.manifest.UtcTimingElement;
 import com.google.android.exoplayer2.upstream.Allocator;
+import com.google.android.exoplayer2.upstream.BandwidthMeterAlgorithm;
+import com.google.android.exoplayer2.upstream.BandwidthMeterAlgorithmProvider;
+import com.google.android.exoplayer2.upstream.BandwidthMeterAlgorithmSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeterAlgorithmProvider;
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.Loader;
@@ -69,7 +73,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** A DASH {@link MediaSource}. */
-public final class DashMediaSource extends BaseMediaSource {
+public final class DashMediaSource extends BaseMediaSource implements BandwidthMeterAlgorithmSelector {
 
   static {
     ExoPlayerLibraryInfo.registerModule("goog.exo.dash");
@@ -1440,5 +1444,22 @@ public final class DashMediaSource extends BaseMediaSource {
   @Override
   public long getLiveTimeUs() {
     return getNowUnixTimeUs();
+  }
+
+  @Override
+  public BandwidthMeterAlgorithmSelector getBandwidthMeterAlgorithmSelector() {
+    return this;
+  }
+
+  @Nullable
+  @Override
+  public BandwidthMeterAlgorithm selectBandwidthMeterAlgorithm(BandwidthMeterAlgorithmProvider bandwidthMeterAlgorithmProvider) {
+    boolean guessLowLatency = false;
+
+    if(guessLowLatency) {
+      return bandwidthMeterAlgorithmProvider.getAlgorithm(DefaultBandwidthMeterAlgorithmProvider.ALGORITHM_LOW_LATENCY);
+    } else {
+      return bandwidthMeterAlgorithmProvider.getAlgorithm(DefaultBandwidthMeterAlgorithmProvider.ALGORITHM_DEFAULT);
+    }
   }
 }

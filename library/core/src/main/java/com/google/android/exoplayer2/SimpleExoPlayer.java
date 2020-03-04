@@ -144,7 +144,7 @@ public class SimpleExoPlayer extends BasePlayer
           renderersFactory,
           new DefaultTrackSelector(context),
           new DefaultLoadControl(),
-          DefaultBandwidthMeter.getSingletonInstance(context),
+          new DefaultBandwidthMeter.Builder(context).build(),
               new DefaultPlaybackRateController.Builder().build(),
           Util.getLooper(),
           new AnalyticsCollector(Clock.DEFAULT),

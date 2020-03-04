@@ -154,7 +154,7 @@ public interface ExoPlayer extends Player {
      * <ul>
      *   <li>{@link TrackSelector}: {@link DefaultTrackSelector}
      *   <li>{@link LoadControl}: {@link DefaultLoadControl}
-     *   <li>{@link BandwidthMeter}: {@link DefaultBandwidthMeter#getSingletonInstance(Context)}
+     *   <li>{@link BandwidthMeter}: {@link DefaultBandwidthMeter}
      *   <li>{@link Looper}: The {@link Looper} associated with the current thread, or the {@link
      *       Looper} of the application's main thread if the current thread doesn't have a {@link
      *       Looper}
@@ -171,7 +171,7 @@ public interface ExoPlayer extends Player {
           renderers,
           new DefaultTrackSelector(context),
           new DefaultLoadControl(),
-          DefaultBandwidthMeter.getSingletonInstance(context),
+          new DefaultBandwidthMeter.Builder(context).build(),
           new DefaultPlaybackRateController.Builder().build(),
           Util.getLooper(),
           new AnalyticsCollector(Clock.DEFAULT),

@@ -270,7 +270,7 @@ public final class ExoPlayerFactory {
         trackSelector,
         loadControl,
         drmSessionManager,
-        DefaultBandwidthMeter.getSingletonInstance(context),
+        new DefaultBandwidthMeter.Builder(context).build(),
         analyticsCollector,
         looper);
   }
@@ -364,8 +364,8 @@ public final class ExoPlayerFactory {
         renderers,
         trackSelector,
         loadControl,
-        DefaultBandwidthMeter.getSingletonInstance(context),
-            playbackRateController,
+        new DefaultBandwidthMeter.Builder(context).build(),
+        playbackRateController,
         looper);
   }
 
@@ -383,7 +383,7 @@ public final class ExoPlayerFactory {
             renderers,
             trackSelector,
             loadControl,
-            DefaultBandwidthMeter.getSingletonInstance(context),
+            new DefaultBandwidthMeter.Builder(context).build(),
             looper);
   }
 

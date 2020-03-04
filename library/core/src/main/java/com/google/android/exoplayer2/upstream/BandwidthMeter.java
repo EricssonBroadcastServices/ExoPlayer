@@ -16,7 +16,10 @@
 package com.google.android.exoplayer2.upstream;
 
 import android.os.Handler;
+
 import androidx.annotation.Nullable;
+
+import com.google.android.exoplayer2.source.MediaSource;
 
 /**
  * Provides estimates of the currently available bandwidth.
@@ -53,6 +56,8 @@ public interface BandwidthMeter {
    */
   @Nullable
   TransferListener getTransferListener();
+
+  void onMediaSourceChanged(MediaSource mediaSource);
 
   /**
    * Adds an {@link EventListener}.

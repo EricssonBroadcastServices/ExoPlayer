@@ -463,6 +463,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     loadControl.onPrepared();
     this.mediaSource = mediaSource;
     setState(Player.STATE_BUFFERING);
+    bandwidthMeter.onMediaSourceChanged(mediaSource);
     mediaSource.prepareSource(/* caller= */ this, bandwidthMeter.getTransferListener());
     handler.sendEmptyMessage(MSG_DO_SOME_WORK);
   }

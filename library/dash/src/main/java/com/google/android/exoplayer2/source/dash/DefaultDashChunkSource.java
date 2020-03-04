@@ -290,8 +290,8 @@ public class DefaultDashChunkSource implements DashChunkSource {
           chunkIterators[i] = MediaChunkIterator.EMPTY;
         } else {
           chunkIterators[i] =
-              new RepresentationSegmentIterator(
-                  representationHolder, segmentNum, lastAvailableSegmentNum);
+    new RepresentationSegmentIterator(
+            representationHolder, segmentNum, lastAvailableSegmentNum);
         }
       }
     }
