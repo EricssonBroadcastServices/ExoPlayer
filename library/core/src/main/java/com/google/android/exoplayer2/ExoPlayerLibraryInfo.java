@@ -21,6 +21,7 @@ import java.util.HashSet;
  * Information about the ExoPlayer library.
  */
 public final class ExoPlayerLibraryInfo {
+  public static final boolean EXPERIMENTAL_ULL = true;
 
   /**
    * A tag to use when logging library information.
