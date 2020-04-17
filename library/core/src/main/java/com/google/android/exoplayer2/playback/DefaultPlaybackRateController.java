@@ -40,9 +40,10 @@ public final class DefaultPlaybackRateController implements PlaybackRateControll
         }
 
         public PlaybackRateController build() {
-            return new DefaultPlaybackRateController(catchupPlaybackRate,
-                    maxDriftMs,
-                                                     targetLatencyMs);
+            return new MattesExperimentalPlaybackRateController.Builder().build(); //Temporary hack while testing
+//            return new DefaultPlaybackRateController(catchupPlaybackRate,
+//                    maxDriftMs,
+//                                                     targetLatencyMs);
         }
     }
 
