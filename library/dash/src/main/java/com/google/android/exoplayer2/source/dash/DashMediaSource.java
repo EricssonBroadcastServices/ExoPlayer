@@ -42,6 +42,8 @@ import com.google.android.exoplayer2.source.dash.PlayerEmsgHandler.PlayerEmsgCal
 import com.google.android.exoplayer2.source.dash.manifest.AdaptationSet;
 import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
 import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
+import com.google.android.exoplayer2.source.dash.manifest.Period;
+import com.google.android.exoplayer2.source.dash.manifest.Representation;
 import com.google.android.exoplayer2.source.dash.manifest.UtcTimingElement;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.BandwidthMeterAlgorithm;
@@ -1455,6 +1457,17 @@ public final class DashMediaSource extends BaseMediaSource implements BandwidthM
   @Override
   public BandwidthMeterAlgorithm selectBandwidthMeterAlgorithm(BandwidthMeterAlgorithmProvider bandwidthMeterAlgorithmProvider) {
     boolean guessLowLatency = false;
+    guessLoop: for(int periodIndex = 0; periodIndex < manifest.getPeriodCount(); ++periodIndex) {
+      Period period = manifest.getPeriod(periodIndex);
+      for(AdaptationSet adaptationSet : period.adaptationSets) {
+        for(Representation representation : adaptationSet.representations) {
+          if(representation.availabilityTimeOffsetUs != C.TIME_UNSET) {
+            guessLowLatency = true;
+            break guessLoop;
+          }
+        }
+      }
+    }
 
     if(guessLowLatency) {
       return bandwidthMeterAlgorithmProvider.getAlgorithm(DefaultBandwidthMeterAlgorithmProvider.ALGORITHM_LOW_LATENCY);

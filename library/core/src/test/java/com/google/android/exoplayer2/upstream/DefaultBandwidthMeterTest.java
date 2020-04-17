@@ -570,15 +570,16 @@ public final class DefaultBandwidthMeterTest {
     Random random = new Random(/* seed= */ 0);
     DataSource dataSource = new FakeDataSource();
     DataSpec dataSpec = new DataSpec(Uri.parse("https://dummy.com"));
+    TransferListener transferListener = bandwidthMeter.getTransferListener();
     for (int i = 0; i < SIMULATED_TRANSFER_COUNT; i++) {
-      bandwidthMeter.onTransferStart(dataSource, dataSpec, /* isNetwork= */ true);
+      transferListener.onTransferStart(dataSource, dataSpec, /* isNetwork= */ true);
       clock.advanceTime(random.nextInt(/* bound= */ 5000));
-      bandwidthMeter.onBytesTransferred(
+      transferListener.onBytesTransferred(
           dataSource,
           dataSpec,
           /* isNetwork= */ true,
           /* bytes= */ random.nextInt(5 * 1024 * 1024));
-      bandwidthMeter.onTransferEnd(dataSource, dataSpec, /* isNetwork= */ true);
+      transferListener.onTransferEnd(dataSource, dataSpec, /* isNetwork= */ true);
       bitrateEstimates[i] = bandwidthMeter.getBitrateEstimate();
     }
     return bitrateEstimates;
