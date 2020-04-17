@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSource.MediaPeriodId;
 import com.google.android.exoplayer2.source.MediaSource.MediaSourceCaller;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -463,7 +464,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
     loadControl.onPrepared();
     this.mediaSource = mediaSource;
     setState(Player.STATE_BUFFERING);
-    bandwidthMeter.onMediaSourceChanged(mediaSource);
+
+    mediaSource.addEventListener(new Handler(Looper.getMainLooper()), new MediaSourceEventListener() {
+      @Override
+      public void onLoadCompleted(int windowIndex, @Nullable MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
+        mediaSource.removeEventListener(this);
+        bandwidthMeter.onMediaSourceChanged(mediaSource);
+      }
+    });
+
+
     mediaSource.prepareSource(/* caller= */ this, bandwidthMeter.getTransferListener());
     handler.sendEmptyMessage(MSG_DO_SOME_WORK);
   }
