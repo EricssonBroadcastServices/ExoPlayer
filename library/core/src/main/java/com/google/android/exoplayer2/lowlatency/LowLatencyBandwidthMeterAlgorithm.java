@@ -73,9 +73,9 @@ public class LowLatencyBandwidthMeterAlgorithm implements BandwidthMeterAlgorith
             slidingPercentile.addSample((int) Math.sqrt(bytesTransferred), bitsPerSecond);
             long estimate = (long) slidingPercentile.getPercentile(0.5f);
             eventDispatcher.onBandwidthEstimate(estimate);
-            Log.d("MATTE_DEBUG", "\testimate: "+estimate);
+//            Log.d("MATTE_DEBUG", "\testimate: "+estimate);
         } else {
-            Log.d("MATTE_DEBUG", "Ignored "+bytesTransferred +" (timediff: "+sampleElapsedTimeMs+")");
+//            Log.d("MATTE_DEBUG", "Ignored "+bytesTransferred +" (timediff: "+sampleElapsedTimeMs+")");
         }
         lastByteUpdate = now;
         eventDispatcher.onBandwidthSample(bytesTransferred);

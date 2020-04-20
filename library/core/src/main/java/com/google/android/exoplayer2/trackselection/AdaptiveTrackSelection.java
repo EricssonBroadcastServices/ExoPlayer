@@ -468,7 +468,8 @@ public class AdaptiveTrackSelection extends BaseTrackSelection {
     // If we adapted, update the trigger.
     if (selectedIndex != currentSelectedIndex) {
       reason = C.SELECTION_REASON_ADAPTIVE;
-      GlobalAppLogger.get().sendLog(new SimpleLog("abr_metering", "Switched to bitrate "+getFormat(selectedIndex).bitrate));
+      //TODO use RemoteLogging
+//      GlobalAppLogger.get().sendLog(new SimpleLog("abr_metering", "Switched to bitrate "+getFormat(selectedIndex).bitrate));
     }
   }
 
