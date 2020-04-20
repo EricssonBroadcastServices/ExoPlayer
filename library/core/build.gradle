@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    api files('libs/players-app-log-java-v1.jar')
     implementation 'androidx.annotation:annotation:' + androidxAnnotationVersion
     compileOnly 'com.google.code.findbugs:jsr305:' + jsr305Version
     compileOnly 'org.checkerframework:checker-qual:' + checkerframeworkVersion

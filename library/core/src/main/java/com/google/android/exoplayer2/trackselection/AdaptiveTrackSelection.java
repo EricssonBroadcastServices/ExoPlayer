@@ -26,6 +26,9 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.Util;
+import com.redbeemedia.playersapplog.GlobalAppLogger;
+import com.redbeemedia.playersapplog.log.SimpleLog;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.nullness.compatqual.NullableType;
@@ -465,6 +468,7 @@ public class AdaptiveTrackSelection extends BaseTrackSelection {
     // If we adapted, update the trigger.
     if (selectedIndex != currentSelectedIndex) {
       reason = C.SELECTION_REASON_ADAPTIVE;
+      GlobalAppLogger.get().sendLog(new SimpleLog("abr_metering", "Switched to bitrate "+getFormat(selectedIndex).bitrate));
     }
   }
 
