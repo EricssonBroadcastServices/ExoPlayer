@@ -16,22 +16,24 @@
 package com.google.android.exoplayer2.trackselection;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.remotedebugging.RemoteLogging;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Clock;
+import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
-import com.redbeemedia.playersapplog.GlobalAppLogger;
-import com.redbeemedia.playersapplog.log.SimpleLog;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /**
  * A bandwidth based adaptive {@link TrackSelection}, whose selected track is updated to be the one
@@ -426,6 +428,9 @@ public class AdaptiveTrackSelection extends BaseTrackSelection {
     this.playbackSpeed = playbackSpeed;
   }
 
+  //TODO remove
+  private int lastTrackSelection = C.INDEX_UNSET; // For abr tracking
+
   @Override
   public void updateSelectedTrack(
       long playbackPositionUs,
@@ -468,8 +473,11 @@ public class AdaptiveTrackSelection extends BaseTrackSelection {
     // If we adapted, update the trigger.
     if (selectedIndex != currentSelectedIndex) {
       reason = C.SELECTION_REASON_ADAPTIVE;
-      //TODO use RemoteLogging
-//      GlobalAppLogger.get().sendLog(new SimpleLog("abr_metering", "Switched to bitrate "+getFormat(selectedIndex).bitrate));
+    }
+
+    if(selectedIndex != lastTrackSelection) {
+      RemoteLogging.getAbrMetering().log("ABR_CHANGE", "bitrate"+(lastTrackSelection == C.INDEX_UNSET ? "(initial)" : "")+": "+getFormat(selectedIndex).bitrate);
+      lastTrackSelection = selectedIndex;
     }
   }
 
