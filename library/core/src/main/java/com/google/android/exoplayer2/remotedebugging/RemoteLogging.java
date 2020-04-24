@@ -8,14 +8,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Users need to: <br/>
+ * 1. Call sendAllLogs when app exits <br/>
+ * 2. Call sendAllLogs when an exception happens <br/>
+ * 3. Start a thread that runs result of createSendLogLoop() and shuts it down (by calling RunnableLoop::stop()) when app exists </br>
+ */
 public class RemoteLogging {
     private static final String CAT_ABR = "abr";
-//    private static final String CAT_DEBUG = "debug";
+    private static final String CAT_DEBUG = "debug";
     private static final Map<String, LogBundle> bundles = new HashMap<>();
 
     static {
         bundles.put(CAT_ABR, new LogBundle("abr_metering"));
-//        bundles.put(CAT_DEBUG, new LogBundle("debug"));
+        bundles.put(CAT_DEBUG, new LogBundle("debug"));
     }
 
     private static List<ILog> harvestLogs(boolean sendEmpty) {
@@ -82,4 +88,16 @@ public class RemoteLogging {
             }
         }
     }
+
+    /**
+     *  logProtocol: "sl_v1", //simple log v1
+     *  entries: [
+     *      {
+     *          timestamp: ${millis}
+     *          tag: ${a tag}
+     *          message: $[logMessage}
+     *      },...
+     *  ]
+     * }
+     */
 }
