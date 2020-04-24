@@ -73,6 +73,10 @@ public class RemoteLogging {
         return new LogCategory(CAT_ABR);
     }
 
+    public static ILogCategory getDebug() {
+        return new LogCategory(CAT_DEBUG);
+    }
+
     private static class LogCategory implements ILogCategory {
         private final String logName;
 
