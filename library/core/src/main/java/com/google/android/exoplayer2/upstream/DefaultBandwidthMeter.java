@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.remotedebugging.RemoteLogging;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventDispatcher;
@@ -205,6 +206,7 @@ public final class DefaultBandwidthMeter implements BandwidthMeter, BandwidthMet
     // Set the initial network type and bitrate estimate
     networkType = context == null ? C.NETWORK_TYPE_UNKNOWN : Util.getNetworkType(context);
     bitrateEstimate = initialBitrateEstimates.getForNetworkType(networkType);
+    RemoteLogging.getBandwidthMetering().log("INITIAL_ESTIMATE", "bitrateEstimate: "+bitrateEstimate);
 
     // Initialize initial BandwidthMeterAlgorithm
     setAlgorithm(bandwidthMeterAlgorithmProvider.getInitialAlgorithm());
@@ -301,6 +303,7 @@ public final class DefaultBandwidthMeter implements BandwidthMeter, BandwidthMet
 
   @Override
   public synchronized void onBandwidthEstimate(long bitrateEstimate) {
+    RemoteLogging.getBandwidthMetering().log("ESTIMATE", "bitrateEstimate: "+bitrateEstimate);
     this.bitrateEstimate = bitrateEstimate;
   }
 

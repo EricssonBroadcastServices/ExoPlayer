@@ -17,11 +17,13 @@ import java.util.Map;
 public class RemoteLogging {
     private static final String CAT_ABR = "abr";
     private static final String CAT_DEBUG = "debug";
+    private static final String CAT_BANDWIDTH = "bandwidth";
     private static final Map<String, LogBundle> bundles = new HashMap<>();
 
     static {
         bundles.put(CAT_ABR, new LogBundle("abr_metering"));
         bundles.put(CAT_DEBUG, new LogBundle("debug"));
+        bundles.put(CAT_BANDWIDTH, new LogBundle("bandwidth_metering"));
     }
 
     private static List<ILog> harvestLogs(boolean sendEmpty) {
@@ -75,6 +77,10 @@ public class RemoteLogging {
 
     public static ILogCategory getDebug() {
         return new LogCategory(CAT_DEBUG);
+    }
+
+    public static ILogCategory getBandwidthMetering() {
+        return new LogCategory(CAT_BANDWIDTH);
     }
 
     private static class LogCategory implements ILogCategory {
