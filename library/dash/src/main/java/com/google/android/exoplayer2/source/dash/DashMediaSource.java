@@ -1001,11 +1001,7 @@ public final class DashMediaSource extends BaseMediaSource implements BandwidthM
     }
     long windowDefaultStartPositionUs = 0;
     if (manifest.dynamic) {
-      long presentationDelayForManifestMs = livePresentationDelayMs;
-      if (!livePresentationDelayOverridesManifest
-          && manifest.suggestedPresentationDelayMs != C.TIME_UNSET) {
-        presentationDelayForManifestMs = manifest.suggestedPresentationDelayMs;
-      }
+      long presentationDelayForManifestMs = getPresentationDelayForManifestMs();
       // Snap the default position to the start of the segment containing it.
       windowDefaultStartPositionUs = windowDurationUs - C.msToUs(presentationDelayForManifestMs);
       if (windowDefaultStartPositionUs < MIN_LIVE_DEFAULT_START_POSITION_US) {
@@ -1099,6 +1095,15 @@ public final class DashMediaSource extends BaseMediaSource implements BandwidthM
     } else {
       return C.msToUs(System.currentTimeMillis());
     }
+  }
+
+  private long getPresentationDelayForManifestMs() {
+    long presentationDelayForManifestMs = livePresentationDelayMs;
+    if (!livePresentationDelayOverridesManifest
+            && manifest.suggestedPresentationDelayMs != C.TIME_UNSET) {
+      presentationDelayForManifestMs = manifest.suggestedPresentationDelayMs;
+    }
+    return presentationDelayForManifestMs;
   }
 
   private static final class PeriodSeekInfo {
@@ -1445,7 +1450,7 @@ public final class DashMediaSource extends BaseMediaSource implements BandwidthM
 
   @Override
   public long getLiveTimeUs() {
-    return getNowUnixTimeUs();
+    return getNowUnixTimeUs()-C.msToUs(getPresentationDelayForManifestMs());
   }
 
   @Override

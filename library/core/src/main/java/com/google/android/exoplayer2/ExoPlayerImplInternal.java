@@ -577,6 +577,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     playbackInfo.totalBufferedDurationUs = getTotalBufferedDurationUs();
 
     long liveTimeUs = mediaSource.getLiveTimeUs();
+    long currentPositionUs = getCurrentUtcPositionUs();
 
     playbackRateController.onPositionsUpdated(playbackSpeed -> {
       PlaybackParameters currentPlaybackParameters = mediaClock.getPlaybackParameters();
@@ -587,7 +588,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
                       currentPlaybackParameters.pitch,
                       currentPlaybackParameters.skipSilence))
               .sendToTarget();
-    }, playbackInfo.positionUs, liveTimeUs);
+    }, currentPositionUs, liveTimeUs);
   }
 
   private void doSomeWork() throws ExoPlaybackException, IOException {
@@ -764,6 +765,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
         playbackInfoUpdate.setPositionDiscontinuity(Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT);
       }
     }
+  }
+
+  /**
+   * Gets the current time since the epoch in microseconds or {@code C.TIME_UNSET} if not applicable
+   */
+  private long getCurrentUtcPositionUs() {
+    playbackInfo.timeline.getPeriodByUid(playbackInfo.periodId.periodUid, period);
+    playbackInfo.timeline.getWindow(period.windowIndex, window);
+    long windowStartTimeUs = C.msToUs(window.windowStartTimeMs);
+    if(windowStartTimeUs == C.TIME_UNSET) {
+      return C.TIME_UNSET;
+    }
+    long positionInWindowUs = period.getPositionInWindowUs();
+    if(positionInWindowUs == C.TIME_UNSET) {
+      return C.TIME_UNSET;
+    }
+    return playbackInfo.positionUs + positionInWindowUs+ windowStartTimeUs;
   }
 
   private long seekToPeriodPosition(MediaPeriodId periodId, long periodPositionUs)
