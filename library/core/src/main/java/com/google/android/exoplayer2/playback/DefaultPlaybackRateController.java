@@ -31,10 +31,7 @@ public final class DefaultPlaybackRateController implements PlaybackRateControll
         }
 
         public PlaybackRateController build() {
-            return new MattesExperimentalPlaybackRateController.Builder().build(); //Temporary hack while testing
-//            return new DefaultPlaybackRateController(catchupPlaybackRate,
-//                    maxDriftMs,
-//                                                     targetLatencyMs);
+            return new DefaultPlaybackRateController(catchupPlaybackRate, maxDriftMs);
         }
     }
 
@@ -76,6 +73,9 @@ public final class DefaultPlaybackRateController implements PlaybackRateControll
                 if (latencyErrorMs <= maxDriftMs) {
                     inactivate(speedHandler);
                     return;
+                } else {
+                    speedUp(speedHandler);
+                    return;
                 }
             } else {
                 inactivate(speedHandler);
@@ -88,6 +88,9 @@ public final class DefaultPlaybackRateController implements PlaybackRateControll
 
                 if (latencyErrorMs >= -maxDriftMs) {
                     inactivate(speedHandler);
+                    return;
+                } else {
+                    slowDown(speedHandler);
                     return;
                 }
             } else {
