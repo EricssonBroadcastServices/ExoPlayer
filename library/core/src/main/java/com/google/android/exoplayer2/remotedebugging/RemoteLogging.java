@@ -92,10 +92,11 @@ public class RemoteLogging {
 
         @Override
         public void log(String tag, String message) {
-            long timestamp = getTimestamp();
-            synchronized (bundles) {
-                bundles.get(logName).addEntry(timestamp, tag, message);
-            }
+            // TODO Matte, this is leaking memory
+            //long timestamp = getTimestamp();
+            //synchronized (bundles) {
+                //bundles.get(logName).addEntry(timestamp, tag, message);
+            //}
         }
     }
 
