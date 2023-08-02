@@ -546,7 +546,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
    */
   private static int[][] getGroupedAdaptationSetIndices(List<AdaptationSet> adaptationSets) {
     int adaptationSetCount = adaptationSets.size();
-    SparseIntArray adaptationSetIdToIndex = new SparseIntArray(adaptationSetCount);
+    Map<Long, Integer> adaptationSetIdToIndex = new HashMap<>(adaptationSetCount);
     List<List<Integer>> adaptationSetGroupedIndices = new ArrayList<>(adaptationSetCount);
     SparseArray<List<Integer>> adaptationSetIndexToGroupedIndices =
         new SparseArray<>(adaptationSetCount);
@@ -573,11 +573,11 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
         // Trick-play can also be specified using a supplemental property.
         trickPlayProperty = findTrickPlayProperty(adaptationSet.supplementalProperties);
       }
-      if (trickPlayProperty != null) {
-        int mainAdaptationSetId = Integer.parseInt(trickPlayProperty.value);
-        int mainAdaptationSetIndex =
-            adaptationSetIdToIndex.get(mainAdaptationSetId, /* valueIfKeyNotFound= */ -1);
-        if (mainAdaptationSetIndex != -1) {
+      if (trickPlayProperty != null && trickPlayProperty.value != null) {
+        long mainAdaptationSetId = Long.parseLong(trickPlayProperty.value);
+        Integer mainAdaptationSetIndex =
+            adaptationSetIdToIndex.get(mainAdaptationSetId);
+        if (mainAdaptationSetIndex != null) {
           mergedGroupIndex = mainAdaptationSetIndex;
         }
       }
@@ -588,14 +588,13 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
         @Nullable
         Descriptor adaptationSetSwitchingProperty =
             findAdaptationSetSwitchingProperty(adaptationSet.supplementalProperties);
-        if (adaptationSetSwitchingProperty != null) {
+        if (adaptationSetSwitchingProperty != null && adaptationSetSwitchingProperty.value != null) {
           String[] otherAdaptationSetIds = Util.split(adaptationSetSwitchingProperty.value, ",");
           for (String adaptationSetId : otherAdaptationSetIds) {
-            int otherAdaptationSetId =
-                adaptationSetIdToIndex.get(
-                    Integer.parseInt(adaptationSetId), /* valueIfKeyNotFound= */ -1);
-            if (otherAdaptationSetId != -1) {
-              mergedGroupIndex = min(mergedGroupIndex, otherAdaptationSetId);
+            Integer otherAdaptationSetIndex =
+                adaptationSetIdToIndex.get(Long.parseLong(adaptationSetId));
+            if (otherAdaptationSetIndex != null) {
+              mergedGroupIndex = min(mergedGroupIndex, otherAdaptationSetIndex);
             }
           }
         }
@@ -679,7 +678,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
       AdaptationSet firstAdaptationSet = adaptationSets.get(adaptationSetIndices[0]);
       String trackGroupId =
           firstAdaptationSet.id != AdaptationSet.ID_UNSET
-              ? Integer.toString(firstAdaptationSet.id)
+              ? Long.toString(firstAdaptationSet.id)
               : ("unset:" + i);
       int primaryTrackGroupIndex = trackGroupCount++;
       int eventMessageTrackGroupIndex =
