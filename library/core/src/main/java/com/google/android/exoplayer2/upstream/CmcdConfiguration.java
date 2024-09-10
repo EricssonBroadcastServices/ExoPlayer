@@ -66,7 +66,14 @@ public final class CmcdConfiguration {
     KEY_BUFFER_LENGTH,
     KEY_CONTENT_ID,
     KEY_SESSION_ID,
-    KEY_MAXIMUM_REQUESTED_BITRATE
+    KEY_MAXIMUM_REQUESTED_BITRATE,
+    KEY_STREAMING_FORMAT,
+    KEY_STREAM_TYPE,
+    KEY_VERSION,
+    KEY_TOP_BITRATE,
+    KEY_OBJECT_DURATION,
+    KEY_MEASURED_THROUGHPUT,
+    KEY_OBJECT_TYPE
   })
   @Documented
   @Target(TYPE_USE)
@@ -84,6 +91,13 @@ public final class CmcdConfiguration {
   public static final String KEY_CONTENT_ID = "cid";
   public static final String KEY_SESSION_ID = "sid";
   public static final String KEY_MAXIMUM_REQUESTED_BITRATE = "rtp";
+  public static final String KEY_STREAMING_FORMAT = "sf";
+  public static final String KEY_STREAM_TYPE = "st";
+  public static final String KEY_VERSION = "v";
+  public static final String KEY_TOP_BITRATE = "tb";
+  public static final String KEY_OBJECT_DURATION = "d";
+  public static final String KEY_MEASURED_THROUGHPUT = "mtp";
+  public static final String KEY_OBJECT_TYPE = "ot";
 
   /**
    * Factory for {@link CmcdConfiguration} instances.
@@ -205,7 +219,7 @@ public final class CmcdConfiguration {
   }
 
   /**
-   * Whether logging bitrate is allowed based on the {@linkplain RequestConfig request
+   * Returns whether logging bitrate is allowed based on the {@linkplain RequestConfig request
    * configuration}.
    */
   public boolean isBitrateLoggingAllowed() {
@@ -213,7 +227,7 @@ public final class CmcdConfiguration {
   }
 
   /**
-   * Whether logging buffer length is allowed based on the {@linkplain RequestConfig request
+   * Returns whether logging buffer length is allowed based on the {@linkplain RequestConfig request
    * configuration}.
    */
   public boolean isBufferLengthLoggingAllowed() {
@@ -221,7 +235,7 @@ public final class CmcdConfiguration {
   }
 
   /**
-   * Whether logging content ID is allowed based on the {@linkplain RequestConfig request
+   * Returns whether logging content ID is allowed based on the {@linkplain RequestConfig request
    * configuration}.
    */
   public boolean isContentIdLoggingAllowed() {
@@ -229,7 +243,7 @@ public final class CmcdConfiguration {
   }
 
   /**
-   * Whether logging session ID is allowed based on the {@linkplain RequestConfig request
+   * Returns whether logging session ID is allowed based on the {@linkplain RequestConfig request
    * configuration}.
    */
   public boolean isSessionIdLoggingAllowed() {
@@ -237,10 +251,58 @@ public final class CmcdConfiguration {
   }
 
   /**
-   * Whether logging maximum requested throughput is allowed based on the {@linkplain RequestConfig
-   * request configuration}.
+   * Returns whether logging maximum requested throughput is allowed based on the {@linkplain
+   * RequestConfig request configuration}.
    */
   public boolean isMaximumRequestThroughputLoggingAllowed() {
     return requestConfig.isKeyAllowed(KEY_MAXIMUM_REQUESTED_BITRATE);
+  }
+
+  /**
+   * Returns whether logging streaming format is allowed based on the {@linkplain RequestConfig
+   * request configuration}.
+   */
+  public boolean isStreamingFormatLoggingAllowed() {
+    return requestConfig.isKeyAllowed(KEY_STREAMING_FORMAT);
+  }
+
+  /**
+   * Returns whether logging stream type is allowed based on the {@linkplain RequestConfig request
+   * configuration}.
+   */
+  public boolean isStreamTypeLoggingAllowed() {
+    return requestConfig.isKeyAllowed(KEY_STREAM_TYPE);
+  }
+
+  /**
+   * Returns whether logging top bitrate is allowed based on the {@linkplain RequestConfig request
+   * configuration}.
+   */
+  public boolean isTopBitrateLoggingAllowed() {
+    return requestConfig.isKeyAllowed(KEY_TOP_BITRATE);
+  }
+
+  /**
+   * Returns whether logging object duration is allowed based on the {@linkplain RequestConfig
+   * request configuration}.
+   */
+  public boolean isObjectDurationLoggingAllowed() {
+    return requestConfig.isKeyAllowed(KEY_OBJECT_DURATION);
+  }
+
+  /**
+   * Returns whether logging measured throughput is allowed based on the {@linkplain RequestConfig
+   * request configuration}.
+   */
+  public boolean isMeasuredThroughputLoggingAllowed() {
+    return requestConfig.isKeyAllowed(KEY_MEASURED_THROUGHPUT);
+  }
+
+  /**
+   * Returns whether logging object type is allowed based on the {@linkplain RequestConfig request
+   * configuration}.
+   */
+  public boolean isObjectTypeLoggingAllowed() {
+    return requestConfig.isKeyAllowed(KEY_OBJECT_TYPE);
   }
 }

@@ -56,6 +56,7 @@ import com.google.android.exoplayer2.upstream.LoaderErrorThrower;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 import java.io.IOException;
 import java.lang.annotation.Documented;
@@ -67,7 +68,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.compatqual.NullableType;
@@ -559,7 +559,8 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
    */
   private static int[][] getGroupedAdaptationSetIndices(List<AdaptationSet> adaptationSets) {
     int adaptationSetCount = adaptationSets.size();
-    Map<Long, Integer> adaptationSetIdToIndex = new HashMap<>(adaptationSetCount);
+    HashMap<Long, Integer> adaptationSetIdToIndex =
+        Maps.newHashMapWithExpectedSize(adaptationSetCount);
     List<List<Integer>> adaptationSetGroupedIndices = new ArrayList<>(adaptationSetCount);
     SparseArray<List<Integer>> adaptationSetIndexToGroupedIndices =
         new SparseArray<>(adaptationSetCount);
@@ -586,10 +587,9 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
         // Trick-play can also be specified using a supplemental property.
         trickPlayProperty = findTrickPlayProperty(adaptationSet.supplementalProperties);
       }
-      if (trickPlayProperty != null && trickPlayProperty.value != null) {
+      if (trickPlayProperty != null) {
         long mainAdaptationSetId = Long.parseLong(trickPlayProperty.value);
-        Integer mainAdaptationSetIndex =
-            adaptationSetIdToIndex.get(mainAdaptationSetId);
+        @Nullable Integer mainAdaptationSetIndex = adaptationSetIdToIndex.get(mainAdaptationSetId);
         if (mainAdaptationSetIndex != null) {
           mergedGroupIndex = mainAdaptationSetIndex;
         }
@@ -601,9 +601,10 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
         @Nullable
         Descriptor adaptationSetSwitchingProperty =
             findAdaptationSetSwitchingProperty(adaptationSet.supplementalProperties);
-        if (adaptationSetSwitchingProperty != null && adaptationSetSwitchingProperty.value != null) {
+        if (adaptationSetSwitchingProperty != null) {
           String[] otherAdaptationSetIds = Util.split(adaptationSetSwitchingProperty.value, ",");
           for (String adaptationSetId : otherAdaptationSetIds) {
+            @Nullable
             Integer otherAdaptationSetIndex =
                 adaptationSetIdToIndex.get(Long.parseLong(adaptationSetId));
             if (otherAdaptationSetIndex != null) {

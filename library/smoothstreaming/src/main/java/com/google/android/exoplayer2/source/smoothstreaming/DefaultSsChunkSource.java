@@ -38,7 +38,7 @@ import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifest;
 import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifest.StreamElement;
 import com.google.android.exoplayer2.trackselection.ExoTrackSelection;
 import com.google.android.exoplayer2.upstream.CmcdConfiguration;
-import com.google.android.exoplayer2.upstream.CmcdLog;
+import com.google.android.exoplayer2.upstream.CmcdHeadersFactory;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
@@ -287,12 +287,17 @@ public class DefaultSsChunkSource implements SsChunkSource {
     Uri uri = streamElement.buildRequestUri(manifestTrackIndex, chunkIndex);
 
     @Nullable
-    CmcdLog cmcdLog =
+    CmcdHeadersFactory cmcdHeadersFactory =
         cmcdConfiguration == null
             ? null
-            : CmcdLog.createInstance(
-                cmcdConfiguration, trackSelection, playbackPositionUs, loadPositionUs);
-    ;
+            : new CmcdHeadersFactory(
+                    cmcdConfiguration,
+                    trackSelection,
+                    bufferedDurationUs,
+                    /* streamingFormat= */ CmcdHeadersFactory.STREAMING_FORMAT_SS,
+                    /* isLive= */ manifest.isLive)
+                .setChunkDurationUs(chunkEndTimeUs - chunkStartTimeUs)
+                .setObjectType(CmcdHeadersFactory.getObjectType(trackSelection));
 
     out.chunk =
         newMediaChunk(
@@ -306,7 +311,7 @@ public class DefaultSsChunkSource implements SsChunkSource {
             trackSelection.getSelectionReason(),
             trackSelection.getSelectionData(),
             chunkExtractor,
-            cmcdLog);
+            cmcdHeadersFactory);
   }
 
   @Override
@@ -351,9 +356,11 @@ public class DefaultSsChunkSource implements SsChunkSource {
       @C.SelectionReason int trackSelectionReason,
       @Nullable Object trackSelectionData,
       ChunkExtractor chunkExtractor,
-      @Nullable CmcdLog cmcdLog) {
+      @Nullable CmcdHeadersFactory cmcdHeadersFactory) {
     ImmutableMap<@CmcdConfiguration.HeaderKey String, String> httpRequestHeaders =
-        cmcdLog == null ? ImmutableMap.of() : cmcdLog.getHttpRequestHeaders();
+        cmcdHeadersFactory == null
+            ? ImmutableMap.of()
+            : cmcdHeadersFactory.createHttpRequestHeaders();
     DataSpec dataSpec =
         new DataSpec.Builder().setUri(uri).setHttpRequestHeaders(httpRequestHeaders).build();
     // In SmoothStreaming each chunk contains sample timestamps relative to the start of the chunk.
